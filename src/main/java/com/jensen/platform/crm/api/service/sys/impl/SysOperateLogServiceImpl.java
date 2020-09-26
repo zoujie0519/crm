@@ -4,7 +4,7 @@
  * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
  * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
-package com.jensen.platform.crm.api.service.sys.sys.impl;
+package com.jensen.platform.crm.api.service.sys.impl;
 
 import com.jensen.platform.crm.api.entity.sys.SysOperateLog;
 import com.jensen.platform.crm.api.mapper.sys.SysOperateLogMapper;

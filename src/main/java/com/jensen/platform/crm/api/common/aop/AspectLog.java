@@ -1,12 +1,12 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:
- * @Package
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  AspectLog.java
+ * @Package com.jensen.platform.crm.api.common.aop
+ * @author: Jensen
+ * @date:   2020/9/26 16:44
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.aop;
 
@@ -30,11 +30,10 @@ import java.lang.reflect.Method;
 import java.util.Date;
 
 /**
- * @ClassName:
- * @Description:(记录操作日志)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  AspectLog
+ * @Description: 记录操作日志
+ * @author: Jensen
+ * @date:  2020/9/26 16:44
  */
 @Aspect
 @Component
@@ -46,11 +45,26 @@ public class AspectLog {
     private SystemLogQueue systemLogQueue;
 
     /**
-     * 定义切点
-     */
+     * @Title:  methodCachePointcut
+     * @Description 定义切点
+     * @Author  Jensen
+     * @Date  2020/9/26 16:53
+     * @param
+     * @Return
+     * @Exception
+    */
     @Pointcut("@annotation(com.jensen.platform.crm.api.common.aop.AnnotationLog)")
     public void methodCachePointcut() {}
 
+    /**
+     * @Title:  around
+     * @Description 环绕切面
+     * @Author  Jensen
+     * @Date  2020/9/26 16:52
+     * @param proceedingJoinPoint
+     * @Return {@link java.lang.Object}
+     * @Exception  
+    */
     @Around("methodCachePointcut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint){
         long begin = System.currentTimeMillis();
@@ -98,6 +112,15 @@ public class AspectLog {
         return result;
     }
 
+    /**
+     * @Title:  getUserId
+     * @Description 获取当前用户Id
+     * @Author  Jensen
+     * @Date  2020/9/26 16:52
+     * @param
+     * @Return {@link java.lang.String}
+     * @Exception
+    */
     private static String getUserId() {
         String userId = "3bbd24ec-fcc3-44b6-bc73-1db85c1a61ed";
         /*UserInfo userInfo = (UserInfo) SecurityUtils.getSubject().getPrincipal();
