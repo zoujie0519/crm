@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jensen.platform.crm.api.mapper.sys.SysOperateLogMapper">
+  <resultMap id="BaseResultMap" type="com.jensen.platform.crm.api.entity.sys.SysOperateLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="Id" jdbcType="CHAR" property="id" />
+    <result column="CreateId" jdbcType="CHAR" property="createId" />
+    <result column="CreateBy" jdbcType="VARCHAR" property="createBy" />
+    <result column="CreateTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="ModifyId" jdbcType="CHAR" property="modifyId" />
+    <result column="ModifyBy" jdbcType="VARCHAR" property="modifyBy" />
+    <result column="ModifyTime" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="IsDeleted" jdbcType="BIT" property="isDeleted" />
+    <result column="Type" jdbcType="VARCHAR" property="type" />
+    <result column="Path" jdbcType="VARCHAR" property="path" />
+    <result column="Description" jdbcType="VARCHAR" property="description" />
+    <result column="StartTime" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="EndTime" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="Time" jdbcType="BIGINT" property="time" />
+    <result column="Content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+
+  <insert id="insertByBatch" parameterType="java.util.List" >
+    insert into sys_operate_log (
+      Id,CreateId,CreateBy,CreateTime,ModifyId,ModifyBy,ModifyTime,IsDeleted,
+      Type,Path,Description,StartTime,EndTime,Time,Content
+    )
+    values
+    <foreach collection="list" item="item" index= "index" separator =",">
+      (
+      #{item.id,jdbcType=CHAR},
+      #{item.createId,jdbcType=VARCHAR},
+      #{item.createBy,jdbcType=VARCHAR},
+      #{item.createTime,jdbcType=TIMESTAMP},
+      #{item.modifyId,jdbcType=VARCHAR},
+      #{item.modifyBy,jdbcType=VARCHAR},
+      #{item.modifyTime,jdbcType=TIMESTAMP},
+      #{item.isDeleted,jdbcType=BIT},
+      #{item.type,jdbcType=VARCHAR},
+      #{item.path,jdbcType=VARCHAR},
+      #{item.description,jdbcType=VARCHAR},
+      #{item.startTime,jdbcType=TIMESTAMP},
+      #{item.endTime,jdbcType=TIMESTAMP},
+      #{item.time,jdbcType=BIGINT},
+      #{item.content,jdbcType=LONGVARCHAR}
+      )
+    </foreach>
+  </insert>
+</mapper>

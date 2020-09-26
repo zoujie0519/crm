@@ -1,0 +1,40 @@
+#服务端口
+server:
+  port: 8081
+
+swagger:
+  show: true
+
+#spring配置
+spring:
+  datasource:
+    name: datasource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://www.luquan.vip:3306/crm
+    username: root
+    password: Aa123456
+    # 使用druid连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+  security:
+    user:
+      name: admin
+      password: Aa123456
+
+#日志配置
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: DEBUG
