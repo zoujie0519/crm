@@ -10,9 +10,9 @@
  */
 package com.jensen.platform.crm.api.common.config;
 
-import com.jensen.platform.crm.api.common.filter.JWTAuthenticationFilter;
-import com.jensen.platform.crm.api.common.filter.JWTLoginFilter;
-import com.jensen.platform.crm.api.common.security.JwtAuthenticationProvider;
+import com.jensen.platform.crm.api.common.security.JwtAuthenticationEntryPoint;
+import com.jensen.platform.crm.api.common.security.JwtAuthorizationTokenFilter;
+import com.jensen.platform.crm.api.common.security.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,14 +21,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
 /**
  * @ClassName:
@@ -43,18 +42,31 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // 使用自定义登录身份认证组件
-        auth.authenticationProvider(new JwtAuthenticationProvider(userDetailsService));
+    @Autowired
+    JwtUserDetailsService jwtUserDetailsService;
+
+    @Autowired
+    JwtAuthorizationTokenFilter authenticationTokenFilter;
+
+    /**
+     * @Description: TODO(权限验证)
+     * @author: jensen
+     * @date:  2020/9/26 11:46
+     */
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoderBean());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //  允许所有用户访问"/"和"/index.html"
-        http.authorizeRequests()
+        http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS, "/**").anonymous()
                 //.antMatchers("/", "/doc.html").permitAll()
                 .anyRequest().authenticated()   // 其他地址的访问均需验证权限
                 .and()
@@ -68,16 +80,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 // 前后端分离采用JWT 不需要session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                // 添加JWT过滤器 除已配置的其它请求都需经过此过滤器
-                .and()
-                .addFilterBefore(new JWTLoginFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JWTAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        // 禁用缓存
+        http.headers().cacheControl();
+        http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/**/*.js", "/lang/*.json", "/**/*.css", "/**/*.js", "/**/*.map", "/**/*.html",
+                "/**/*.png");
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoderBean() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
     @Override
-    public AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

@@ -1,6 +1,9 @@
 package com.jensen.platform.crm.api.entity.auth;
 
 import com.jensen.platform.crm.api.common.bean.Entity;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.*;
 

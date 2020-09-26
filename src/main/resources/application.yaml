@@ -38,3 +38,8 @@ logging:
   config: classpath:logback-spring.xml
   level:
     root: DEBUG
+#jwt配置
+jwt:
+  secret: secret
+  expiration: 7200000
+  token: Authorization
