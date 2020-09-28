@@ -1,12 +1,12 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:
- * @Package
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  AbstractService.java
+ * @Package com.jensen.platform.crm.api.common.bean
+ * @author: Jensen
+ * @date:   2020/9/28 10:00
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.bean;
 
@@ -20,11 +20,10 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 /**
- * @ClassName:
- * @Description:(基于通用MyBatis Mapper插件的Service接口的实现)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  AbstractService
+ * @Description: 基于通用MyBatis Mapper插件的Service接口的实现
+ * @author: Jensen
+ * @date:  2020/9/28 10:01
  */
 public abstract class AbstractService<T> implements Service<T> {
 

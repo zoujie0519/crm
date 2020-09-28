@@ -1,12 +1,12 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:
- * @Package
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  JwtAuthenticationEntryPoint.java
+ * @Package com.jensen.platform.crm.api.common.security
+ * @author: Jensen
+ * @date:   2020/9/28 10:43
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.security;
 
@@ -20,12 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @ClassName:
- * @Description:(描述这个类的作用)
- * @author: jensen
- * @date:
- * @Copyright:
- */
+ * @ClassName:  JwtAuthenticationEntryPoint
+ * @Description: TODO(描述这个类的作用)
+ * @author: Jensen
+ * @date:  2020/9/28 10:44
+ */ 
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override

@@ -1,12 +1,12 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:  MyBatisSpringConfig
- * @Package com.jensen.platform.crm.api
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  MyBatisSpringConfig.java
+ * @Package com.jensen.platform.crm.api.common.config
+ * @author: Jensen
+ * @date:   2020/9/28 10:21
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.config;
 
@@ -30,11 +30,10 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
- * @ClassName:
- * @Description:(描述这个类的作用)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  MyBatisSpringConfig
+ * @Description: MyBatisSpring配置
+ * @author: Jensen
+ * @date:  2020/9/28 10:21
  */
 @Configuration
 @EnableTransactionManagement
@@ -43,10 +42,15 @@ public class MyBatisSpringConfig implements TransactionManagementConfigurer {
     @Autowired
     private DataSource dataSource;
 
-    // 在Spring中注册SqlSessionFactory，在这里可以设置一下参数：
-    // 1.设置分页参数
-    // 2.配置MyBatis运行时参数
-    // 3.注册xml映射器
+    /**
+     * @Title:  sqlSessionFactory
+     * @Description 在Spring中注册SqlSessionFactory，在这里可以设置一下参数：1.设置分页参数 2.配置MyBatis运行时参数 3.注册xml映射器
+     * @Author  Jensen
+     * @Date  2020/9/28 10:22
+     * @param
+     * @Return {@link org.apache.ibatis.session.SqlSessionFactory}
+     * @Exception
+    */
     @Bean
     public SqlSessionFactory sqlSessionFactory() {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
@@ -87,16 +91,28 @@ public class MyBatisSpringConfig implements TransactionManagementConfigurer {
     }
 
     /**
-     * 注入sqlSession对象
+     * @Title:  sqlSessionTemplate
+     * @Description 注入sqlSession对象
+     * @Author  Jensen
+     * @Date  2020/9/28 10:23
      * @param sqlSessionFactory
-     * @return
-     */
+     * @Return {@link org.mybatis.spring.SqlSessionTemplate}
+     * @Exception
+    */
     @Bean(value = "sqlSession")
     public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 
-    // Spring事务管理器
+    /**
+     * @Title:  annotationDrivenTransactionManager
+     * @Description Spring事务管理器
+     * @Author  Jensen
+     * @Date  2020/9/28 10:23
+     * @param
+     * @Return {@link org.springframework.transaction.PlatformTransactionManager}
+     * @Exception
+    */
     @Bean(value = "transactionManager")
     @Override
     public PlatformTransactionManager annotationDrivenTransactionManager() {

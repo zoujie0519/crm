@@ -1,12 +1,12 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:
- * @Package
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  Entity.java
+ * @Package com.jensen.platform.crm.api.common.bean
+ * @author: Jensen
+ * @date:   2020/9/28 10:02
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.bean;
 
@@ -19,11 +19,10 @@ import javax.persistence.Id;
 import java.util.Date;
 
 /**
- * @ClassName:
- * @Description:(描述这个类的作用)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  Entity
+ * @Description: 数据库实体基础类
+ * @author: Jensen
+ * @date:  2020/9/28 10:02
  */
 public class Entity {
 
@@ -221,10 +220,15 @@ public class Entity {
     }
 
     /**
-     * @Description: TODO(构造基础参数)
-     * @author: jensen
-     * @date:  2020/9/19 10:26
-     */
+     * @Title:  builder
+     * @Description 构造初始化数据
+     * @Author  Jensen
+     * @Date  2020/9/28 10:02
+     * @param userId
+     * @param userName
+     * @Return
+     * @Exception
+    */
     public void builder(String userId, String userName) {
         this.id = ApplicationUtils.randomUUID();
         this.createId = userId;
@@ -236,6 +240,15 @@ public class Entity {
         this.isDeleted = false;
     }
 
+    /**
+     * @Title:  toString
+     * @Description 重写tosString方法
+     * @Author  Jensen
+     * @Date  2020/9/28 10:03
+     * @param
+     * @Return {@link java.lang.String}
+     * @Exception
+    */
     @Override
     public String toString(){
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);

@@ -1,12 +1,12 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:
- * @Package
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  SystemLogConsumer.java
+ * @Package com.jensen.platform.crm.api.common.queue
+ * @author: Jensen
+ * @date:   2020/9/28 10:41
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.queue;
 
@@ -23,13 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @ClassName:
- * @Description:(系统日志队列消费者)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  SystemLogConsumer
+ * @Description: 系统日志队列消费者
+ * @author: Jensen
+ * @date:  2020/9/28 10:41
  */
-
 @Component
 public class SystemLogConsumer implements Runnable {
 
@@ -47,6 +45,15 @@ public class SystemLogConsumer implements Runnable {
 
     private Thread thread;
 
+    /***
+     * @Title:  init
+     * @Description 初始化启动线程
+     * @Author  Jensen
+     * @Date  2020/9/28 10:41
+     * @param
+     * @Return
+     * @Exception
+    */
     @PostConstruct
     public void init() {
         thread = new Thread(this);
@@ -65,6 +72,15 @@ public class SystemLogConsumer implements Runnable {
         }
     }
 
+    /***
+     * @Title:  execute
+     * @Description 执行线程
+     * @Author  Jensen
+     * @Date  2020/9/28 10:41
+     * @param
+     * @Return
+     * @Exception
+    */
     public void execute() {
         List<SysOperateLog> sysOperateLogs = new ArrayList<>();
         try {

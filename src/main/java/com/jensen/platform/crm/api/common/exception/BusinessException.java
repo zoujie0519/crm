@@ -1,21 +1,20 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:
- * @Package
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  BusinessException.java
+ * @Package com.jensen.platform.crm.api.common.exception
+ * @author: Jensen
+ * @date:   2020/9/28 10:35
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.exception;
 
 /**
- * @ClassName:
- * @Description:(业务异常类)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  BusinessException
+ * @Description: 自定义业务异常类
+ * @author: Jensen
+ * @date:  2020/9/28 10:35
  */
 public class BusinessException extends RuntimeException {
 

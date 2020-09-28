@@ -1,12 +1,12 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:
- * @Package
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  GlobalExceptionHandler.java
+ * @Package com.jensen.platform.crm.api.common.exception
+ * @author: Jensen
+ * @date:   2020/9/28 10:36
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.exception;
 
@@ -21,11 +21,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * @ClassName:
- * @Description:(全局异常处理)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  GlobalExceptionHandler
+ * @Description: 全局异常处理
+ * @author: Jensen
+ * @date:  2020/9/28 10:36
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -33,10 +32,14 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * 处理所有不可知的异常
+     * @Title:  handleException
+     * @Description 处理所有不可知的异常
+     * @Author  Jensen
+     * @Date  2020/9/28 10:36
      * @param e
-     * @return
-     */
+     * @Return {@link com.jensen.platform.crm.api.common.bean.ResponseModel}
+     * @Exception
+    */
     @ExceptionHandler(Exception.class)
     @ResponseBody
     ResponseModel handleException(Exception e) {
@@ -45,10 +48,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理所有业务异常
+     * @Title:  handleBusinessException
+     * @Description 处理所有业务异常
+     * @Author  Jensen
+     * @Date  2020/9/28 10:36
      * @param e
-     * @return
-     */
+     * @Return {@link com.jensen.platform.crm.api.common.bean.ResponseModel}
+     * @Exception
+    */
     @ExceptionHandler(BusinessException.class)
     @ResponseBody
     ResponseModel handleBusinessException(BusinessException e){
@@ -57,10 +64,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理所有接口数据验证异常
+     * @Title:  handleMethodArgumentNotValidException
+     * @Description 处理所有接口数据验证异常
+     * @Author  Jensen
+     * @Date  2020/9/28 10:37
      * @param e
-     * @return
-     */
+     * @Return {@link com.jensen.platform.crm.api.common.bean.ResponseModel}
+     * @Exception
+    */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     ResponseModel handleMethodArgumentNotValidException(MethodArgumentNotValidException e){

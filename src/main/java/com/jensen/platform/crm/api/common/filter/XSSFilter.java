@@ -1,12 +1,12 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:
- * @Package
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  XSSFilter.java
+ * @Package com.jensen.platform.crm.api.common.filter
+ * @author: Jensen
+ * @date:   2020/9/28 10:37
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.filter;
 
@@ -23,19 +23,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @ClassName:
- * @Description:(拦截防止xss注入 通过Jsoup过滤请求参数内的特定字符)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  XSSFilter
+ * @Description: (拦截防止xss注入 通过Jsoup过滤请求参数内的特定字符)
+ * @author: Jensen
+ * @date:  2020/9/28 10:37
  */
 public class XSSFilter implements Filter {
 
-    //是否过滤富文本内容
+    /** 是否过滤富文本内容 */
     private static boolean IS_INCLUDE_RICH_TEXT = true;
 
     public List<String> excludes = new ArrayList<>();
 
+    /***
+     * @Title:  doFilter
+     * @Description 执行逻辑
+     * @Author  Jensen
+     * @Date  2020/9/28 10:38
+     * @param request
+     * @param response
+     * @param filterChain
+     * @Return
+     * @Exception
+    */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
@@ -63,6 +73,15 @@ public class XSSFilter implements Filter {
         return false;
     }
 
+    /***
+     * @Title:  init
+     * @Description 初始化
+     * @Author  Jensen
+     * @Date  2020/9/28 10:37
+     * @param filterConfig
+     * @Return
+     * @Exception
+    */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         String isIncludeRichText = filterConfig.getInitParameter("isIncludeRichText");
@@ -78,6 +97,15 @@ public class XSSFilter implements Filter {
         }
     }
 
+    /***
+     * @Title:  destroy
+     * @Description 销毁
+     * @Author  Jensen
+     * @Date  2020/9/28 10:38
+     * @param
+     * @Return
+     * @Exception
+    */
     @Override
     public void destroy() {
     }

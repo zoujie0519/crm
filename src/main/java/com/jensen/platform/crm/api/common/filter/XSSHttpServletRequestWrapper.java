@@ -1,12 +1,12 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:
- * @Package
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  XSSHttpServletRequestWrapper.java
+ * @Package com.jensen.platform.crm.api.common.filter
+ * @author: Jensen
+ * @date:   2020/9/28 10:38
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.filter;
 
@@ -17,12 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
- * @ClassName:
- * @Description:(重写请求参数处理函数)
- * @author: jensen
- * @date:
- * @Copyright:
- */
+ * @ClassName:  XSSHttpServletRequestWrapper
+ * @Description: 重写请求参数处理函数
+ * @author: Jensen
+ * @date:  2020/9/28 10:38
+ */ 
 public class XSSHttpServletRequestWrapper extends HttpServletRequestWrapper {
     HttpServletRequest orgRequest = null;
 
@@ -35,10 +34,16 @@ public class XSSHttpServletRequestWrapper extends HttpServletRequestWrapper {
     }
 
     /**
-     * 覆盖getParameter方法，将参数名和参数值都做xss过滤.
-     * 如果需要获得原始的值，则通过super.getParameterValues(name)来获取
-     * getParameterNames,getParameterValues和getParameterMap也可能需要覆盖
-     */
+     * @Title:  getParameter
+     * @Description 覆盖getParameter方法，将参数名和参数值都做xss过滤.
+     *              如果需要获得原始的值，则通过super.getParameterValues(name)来获取
+     *              getParameterNames,getParameterValues和getParameterMap也可能需要覆盖
+     * @Author  Jensen
+     * @Date  2020/9/28 10:40
+     * @param name
+     * @Return {@link java.lang.String}
+     * @Exception
+    */
     @Override
     public String getParameter(String name) {
         if (("content".equals(name) || name.endsWith("WithHtml")) && !isIncludeRichText) {
@@ -52,6 +57,15 @@ public class XSSHttpServletRequestWrapper extends HttpServletRequestWrapper {
         return value;
     }
 
+    /**
+     * @Title:  getParameterValues
+     * @Description 获取参数和值
+     * @Author  Jensen
+     * @Date  2020/9/28 10:40
+     * @param name
+     * @Return {@link java.lang.String[]}
+     * @Exception
+    */
     @Override
     public String[] getParameterValues(String name) {
         String[] arr = super.getParameterValues(name);
@@ -65,10 +79,16 @@ public class XSSHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
 
     /**
-     * 覆盖getHeader方法，将参数名和参数值都做xss过滤。<br/>
-     * 如果需要获得原始的值，则通过super.getHeaders(name)来获取<br/>
-     * getHeaderNames 也可能需要覆盖
-     */
+     * @Title:  getHeader
+     * @Description 覆盖getHeader方法，将参数名和参数值都做xss过滤。
+     *              如果需要获得原始的值，则通过super.getHeaders(name)来获取
+     *              getHeaderNames 也可能需要覆盖
+     * @Author  Jensen
+     * @Date  2020/9/28 10:39
+     * @param name
+     * @Return {@link java.lang.String}
+     * @Exception
+    */
     @Override
     public String getHeader(String name) {
         name = XSSFilterUtils.clean(name);
@@ -80,19 +100,27 @@ public class XSSHttpServletRequestWrapper extends HttpServletRequestWrapper {
     }
 
     /**
-     * 获取最原始的request
-     *
-     * @return
-     */
+     * @Title:  getOrgRequest
+     * @Description 获取最原始的request
+     * @Author  Jensen
+     * @Date  2020/9/28 10:39
+     * @param
+     * @Return {@link javax.servlet.http.HttpServletRequest}
+     * @Exception
+    */
     public HttpServletRequest getOrgRequest() {
         return orgRequest;
     }
 
     /**
-     * 获取最原始的request的静态方法
-     *
-     * @return
-     */
+     * @Title:  getOrgRequest
+     * @Description 获取最原始的request的静态方法
+     * @Author  Jensen
+     * @Date  2020/9/28 10:39
+     * @param request
+     * @Return {@link javax.servlet.http.HttpServletRequest}
+     * @Exception
+    */
     public static HttpServletRequest getOrgRequest(HttpServletRequest request) {
         if (request instanceof XSSHttpServletRequestWrapper) {
             return ((XSSHttpServletRequestWrapper) request).getOrgRequest();

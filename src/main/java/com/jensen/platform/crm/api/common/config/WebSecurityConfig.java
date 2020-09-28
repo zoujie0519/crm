@@ -1,12 +1,12 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:
- * @Package
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  WebSecurityConfig.java
+ * @Package com.jensen.platform.crm.api.common.config
+ * @author: Jensen
+ * @date:   2020/9/28 10:30
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.config;
 
@@ -30,11 +30,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * @ClassName:
- * @Description:(描述这个类的作用)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  WebSecurityConfig
+ * @Description: WebSecurity配置
+ * @author: Jensen
+ * @date:  2020/9/28 10:30
  */
 @Configuration
 @EnableWebSecurity
@@ -51,15 +50,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     JwtAuthorizationTokenFilter authenticationTokenFilter;
 
     /**
-     * @Description: TODO(权限验证)
-     * @author: jensen
-     * @date:  2020/9/26 11:46
-     */
+     * @Title:  configureGlobal
+     * @Description 权限验证
+     * @Author  Jensen
+     * @Date  2020/9/28 10:31
+     * @param auth
+     * @Return
+     * @Exception
+    */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoderBean());
     }
 
+    /***
+     * @Title:  configure
+     * @Description 安全配置
+     * @Author  Jensen
+     * @Date  2020/9/28 10:31
+     * @param http
+     * @Return
+     * @Exception
+    */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //  允许所有用户访问"/"和"/index.html"

@@ -1,12 +1,12 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:
- * @Package
- * @Description: todo
- * @author: jensen
- * @date:
+ * @Title:  ResponseModel.java
+ * @Package com.jensen.platform.crm.api.common.bean
+ * @author: Jensen
+ * @date:   2020/9/28 10:14
  * @version V1.0
- * @Copyright:
+ * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
+ * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
 package com.jensen.platform.crm.api.common.bean;
 
@@ -19,11 +19,10 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @ClassName:
- * @Description:(全局API接口)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  ResponseModel
+ * @Description: 全局API接口返回数据模型
+ * @author: Jensen
+ * @date:  2020/9/28 10:14
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
