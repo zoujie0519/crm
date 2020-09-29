@@ -10,66 +10,91 @@
  */
 package com.jensen.platform.crm.api.common.security;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * @ClassName:
- * @Description:(描述这个类的作用)
+ * @Description:(对所有请求进行过滤)
  * @author: jensen
  * @date:
  * @Copyright:
  */
 @Component
-public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
+public class JwtAuthorizationTokenFilter extends BasicAuthenticationFilter {
 
-    private final UserDetailsService userDetailsService;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final String tokenHeader;
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthorizationTokenFilter.class);
 
-    public JwtAuthorizationTokenFilter(@Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService,
-                                       JwtTokenUtil jwtTokenUtil, @Value("${jwt.token}") String tokenHeader) {
-        this.userDetailsService = userDetailsService;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.tokenHeader = tokenHeader;
+    public JwtAuthorizationTokenFilter(AuthenticationManager authenticationManager) {
+        super(authenticationManager);
     }
 
+    /**
+     * @Title:  doFilterInternal
+     * @Description 从request的header部分读取Token
+     * @Author  Jensen
+     * @Date  2020/9/29 10:06
+     * @param request
+     * @param response
+     * @param chain
+     * @Return
+     * @Exception
+    */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        final String requestHeader = request.getHeader(this.tokenHeader);
-        String username = null;
-        String authToken = null;
-        if (requestHeader != null && requestHeader.startsWith("Bearer ")) {
-            authToken = requestHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(authToken);
-            } catch (ExpiredJwtException e) {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws IOException, ServletException {
+        String tokenHeader = request.getHeader(JwtTokenUtils.TOKEN_HEADER);
+        logger.info("tokenHeader: {}", tokenHeader);
+        // 如果请求头中没有Authorization信息则直接放行了
+        if (tokenHeader == null || !tokenHeader.startsWith(JwtTokenUtils.TOKEN_PREFIX)) {
+            chain.doFilter(request, response);
+            return;
+        }
+        // 如果请求头中有token，则进行解析，并且设置认证信息
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(tokenHeader));
+        super.doFilterInternal(request, response, chain);
+    }
+
+    /**
+     * @Title:  getAuthentication
+     * @Description 读取Token信息，创建UsernamePasswordAuthenticationToken对象
+     * @Author  Jensen
+     * @Date  2020/9/29 10:07
+     * @param tokenHeader
+     * @Return {@link org.springframework.security.authentication.UsernamePasswordAuthenticationToken}
+     * @Exception
+    */
+    private UsernamePasswordAuthenticationToken getAuthentication(String tokenHeader) {
+        //解析Token时将“Bearer ”前缀去掉
+        String token = tokenHeader.replace(JwtTokenUtils.TOKEN_PREFIX, "");
+        String username = JwtTokenUtils.getUsername(token);
+        List<String> roles = JwtTokenUtils.getUserRole(token);
+        Collection<GrantedAuthority> authorities = new HashSet<>();
+        if (roles!=null) {
+            for (String role : roles) {
+                authorities.add(new SimpleGrantedAuthority(role));
             }
         }
-
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-            if (jwtTokenUtil.validateToken(authToken, userDetails)) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-
+        if (username != null){
+            return new UsernamePasswordAuthenticationToken(username, null, authorities);
         }
-        chain.doFilter(request, response);
+        return null;
     }
 }

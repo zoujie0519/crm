@@ -47,7 +47,7 @@ public class SwaggerConfig {
 
         // 在请求头中添加一个为 Authorization 的属性 Security拦截器JWT认证的时需要
         Parameter parameter = new ParameterBuilder()
-                .name("token")
+                .name("Authorization")
                 .description("token令牌")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")
