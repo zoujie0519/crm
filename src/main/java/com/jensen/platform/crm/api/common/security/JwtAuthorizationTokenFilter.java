@@ -30,11 +30,10 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * @ClassName:
- * @Description:(对所有请求进行过滤)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  JwtAuthorizationTokenFilter
+ * @Description: 对所有请求进行过滤
+ * @author: Jensen
+ * @date:  2020/10/17 18:07
  */
 @Component
 public class JwtAuthorizationTokenFilter extends BasicAuthenticationFilter {
@@ -49,13 +48,13 @@ public class JwtAuthorizationTokenFilter extends BasicAuthenticationFilter {
      * @Title:  doFilterInternal
      * @Description 从request的header部分读取Token
      * @Author  Jensen
-     * @Date  2020/9/29 10:06
-     * @param request
-     * @param response
-     * @param chain
-     * @Return
+     * @Date  2020/10/17 17:39
+     * @Param request
+     * @Param response
+     * @Param chain
+     * @Return void
      * @Exception
-    */
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -76,11 +75,11 @@ public class JwtAuthorizationTokenFilter extends BasicAuthenticationFilter {
      * @Title:  getAuthentication
      * @Description 读取Token信息，创建UsernamePasswordAuthenticationToken对象
      * @Author  Jensen
-     * @Date  2020/9/29 10:07
-     * @param tokenHeader
-     * @Return {@link org.springframework.security.authentication.UsernamePasswordAuthenticationToken}
+     * @Date  2020/10/17 17:48
+     * @Param tokenHeader
+     * @Return org.springframework.security.authentication.UsernamePasswordAuthenticationToken
      * @Exception
-    */
+     */
     private UsernamePasswordAuthenticationToken getAuthentication(String tokenHeader) {
         //解析Token时将“Bearer ”前缀去掉
         String token = tokenHeader.replace(JwtTokenUtils.TOKEN_PREFIX, "");

@@ -10,10 +10,16 @@
  */
 package com.jensen.platform.crm.api.common.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.CaseFormat;
 import freemarker.template.TemplateExceptionHandler;
+import netscape.javascript.JSObject;
 import org.apache.commons.lang3.StringUtils;
+import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.MyBatisGenerator;
+import org.mybatis.generator.api.dom.java.CompilationUnit;
+import org.mybatis.generator.api.dom.java.Field;
+import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.config.*;
 import org.mybatis.generator.internal.DefaultShellCallback;
 
@@ -59,6 +65,9 @@ public class CodeGenerator {
     // Controller所在包
     public static String CONTROLLER_PACKAGE = BASE_PACKAGE + ".controller";
 
+    // viewObject所在包
+    public static String VIEW_OBJECT_PACKAGE = BASE_PACKAGE + ".pojo.vo";
+
     // Mapper xml所在包
     public static String SQL_MAP_PACKAGE = "mapper";
 
@@ -83,7 +92,7 @@ public class CodeGenerator {
      * @Exception
     */
     public static void main(String[] args) {
-        genCode("auth", "auth_user");
+        genCode("member", "member_info");
     }
 
     /**
@@ -166,9 +175,23 @@ public class CodeGenerator {
             throw new RuntimeException("生成Model和Mapper失败", e);
         }
 
-        if (generator.getGeneratedJavaFiles().isEmpty() || generator.getGeneratedXmlFiles().isEmpty()) {
+        List<GeneratedJavaFile> generatedJavaFiles = generator.getGeneratedJavaFiles();
+        if (generatedJavaFiles.isEmpty() || generator.getGeneratedXmlFiles().isEmpty()) {
             throw new RuntimeException("生成Model和Mapper失败：" + warnings);
         }
+
+        if(!generatedJavaFiles.isEmpty()) {
+            GeneratedJavaFile generatedJavaFile = generatedJavaFiles.get(0);
+            TopLevelClass topLevelClass = (TopLevelClass)generatedJavaFile.getCompilationUnit();
+
+            if(topLevelClass != null) {
+                List<Field> fields = topLevelClass.getFields();
+                if(fields != null && !fields.isEmpty()) {
+                    genViewObject(tableName, fields);
+                }
+            }
+        }
+
         String modelName = tableNameConvertUpperCamel(tableName);
         System.out.println(modelName + ".java 生成成功");
         System.out.println(modelName + "Mapper.java 生成成功");
@@ -218,6 +241,32 @@ public class CodeGenerator {
         }
     }
 
+    private static void genViewObject(String tableName, List<Field> fields) {
+        try {
+            freemarker.template.Configuration cfg = getConfiguration();
+            Map<String, Object> data = new HashMap<>();
+            data.put("date", DATE);
+            data.put("author", AUTHOR);
+            String modelNameUpperCamel = tableNameConvertUpperCamel(tableName);
+            data.put("modelNameUpperCamel", modelNameUpperCamel);
+            data.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
+            data.put("basePackage", BASE_PACKAGE);
+            data.put("basePackagePojoViewObject", VIEW_OBJECT_PACKAGE);
+            data.put("fields", fields);
+            System.out.println("fields: " + JSONObject.toJSONString(fields));
+
+            File file = new File(JAVA_PATH + packageConvertPath(VIEW_OBJECT_PACKAGE) + modelNameUpperCamel + "VO.java");
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            cfg.getTemplate("pojo-vo.ftl").process(data, new FileWriter(file));
+
+            System.out.println(modelNameUpperCamel + "VO.java 生成成功");
+        } catch (Exception e) {
+            throw new RuntimeException("生成ViewObject失败", e);
+        }
+    }
+
     /**
      * @Title:  genController
      * @Description 生成控制器文件
@@ -252,7 +301,6 @@ public class CodeGenerator {
         } catch (Exception e) {
             throw new RuntimeException("生成Controller失败", e);
         }
-
     }
 
     /**

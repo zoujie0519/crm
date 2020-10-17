@@ -21,11 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @ClassName:
- * @Description:(描述这个类的作用)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  JwtUserDetailsService
+ * @Description: JWT用户服务自定义类
+ * @author: Jensen
+ * @date:  2020/10/17 18:15
  */
 @Service
 public class JwtUserDetailsService implements UserDetailsService {

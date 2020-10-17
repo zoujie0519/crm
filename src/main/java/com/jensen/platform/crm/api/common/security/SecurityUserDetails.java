@@ -21,11 +21,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.Collection;
 
 /**
- * @ClassName:
- * @Description:(描述这个类的作用)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @ClassName:  SecurityUserDetails
+ * @Description: jwt用户实体类
+ * @author: Jensen
+ * @date:  2020/10/17 18:15
  */
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
