@@ -10,6 +10,7 @@
  */
 package com.jensen.platform.crm.api.common.bean;
 
+import com.jensen.platform.crm.api.common.constant.Constant;
 import com.jensen.platform.crm.api.common.utils.ApplicationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -222,13 +223,13 @@ public class Entity {
     /**
      * @Title:  builder
      * @Description 构造初始化数据
-     * @Author  Jensen
-     * @Date  2020/9/28 10:02
-     * @param userId
-     * @param userName
-     * @Return
+     * @Param userId
+     * @Param userName
+     * @Return void
      * @Exception
-    */
+     * @Author  Jensen
+     * @Date  2020/10/18 16:53
+     */
     public void builder(String userId, String userName) {
         this.id = ApplicationUtils.randomUUID();
         this.createId = userId;
@@ -236,6 +237,25 @@ public class Entity {
         this.createTime = new Date();
         this.modifyId = userId;
         this.modifyBy = userName;
+        this.modifyTime = new Date();
+        this.isDeleted = false;
+    }
+
+    /**
+     * @Title:  builder
+     * @Description 构造初始化数据
+     * @Return
+     * @Exception
+     * @Author  Jensen
+     * @Date  2020/9/28 10:02
+     */
+    public void builder() {
+        this.id = ApplicationUtils.randomUUID();
+        this.createId = Constant.SYSTEM_ADMIN_ID;
+        this.createBy = Constant.SYSTEM_ADMIN_NAME;
+        this.createTime = new Date();
+        this.modifyId = Constant.SYSTEM_ADMIN_ID;
+        this.modifyBy = Constant.SYSTEM_ADMIN_NAME;
         this.modifyTime = new Date();
         this.isDeleted = false;
     }

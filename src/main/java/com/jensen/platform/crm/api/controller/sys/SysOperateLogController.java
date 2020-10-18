@@ -25,10 +25,11 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
-* @Description: SysOperateLogController类
-* @author jensen
-* @date 2020/09/19 10:48
-*/
+ * @ClassName:  SysOperateLogController类
+ * @Description: TODO
+ * @author: Jensen
+ * @date:  2020/10/18 16:29
+ */
 @RestController
 @Api(tags = "SysOperateLog控制器")
 @RequestMapping("/sysOperateLog")
@@ -38,10 +39,14 @@ public class SysOperateLogController {
     private SysOperateLogService sysOperateLogService;
 
     /**
-	* @Description: 添加数据
-	* @param sysOperateLog 添加的数据
-	* @Reutrn ResponseModel<Integer>>
-	*/
+     * @Title:  insert
+     * @Description 添加数据
+     * @Param sysOperateLog 添加的数据
+     * @Return com.jensen.platform.crm.api.common.bean.ResponseModel<java.lang.Integer>
+     * @Exception
+     * @Author  Jensen
+     * @Date  2020/10/18 16:22
+     */
     @PostMapping("/insert")
 	@ApiOperation("添加的数据")
     @AnnotationLog(desc = "添加的数据", path = "/sysOperateLog/insert")
@@ -52,10 +57,14 @@ public class SysOperateLogController {
     }
 
     /**
-	* @Description: 根据Id删除数据
-	* @param id 主键
-	* @Reutrn ResponseModel<Integer>>
-	*/
+     * @Title:  deleteById
+     * @Description 根据Id删除数据
+     * @Param id 主键
+     * @Return com.jensen.platform.crm.api.common.bean.ResponseModel<java.lang.Integer>
+     * @Exception
+     * @Author  Jensen
+     * @Date  2020/10/18 16:37
+     */
     @PostMapping("/deleteById")
 	@ApiOperation("根据Id删除数据")
     @AnnotationLog(desc = "根据Id删除数据", path = "/sysOperateLog/deleteById")
@@ -65,10 +74,14 @@ public class SysOperateLogController {
     }
 
     /**
-	* @Description: 更新数据
-	* @param sysOperateLog 更新的数据
-	* @Reutrn ResponseModel<SysOperateLog>
-	*/
+     * @Title:  update
+     * @Description 更新数据
+     * @Param sysOperateLog 更新的数据
+     * @Return com.jensen.platform.crm.api.common.bean.ResponseModel<java.lang.Integer>
+     * @Exception
+     * @Author  Jensen
+     * @Date  2020/10/18 16:39
+     */
     @PostMapping("/update")
 	@ApiOperation("更新数据")
     @AnnotationLog(desc = "更新数据", path = "/sysOperateLog/update")
@@ -78,9 +91,13 @@ public class SysOperateLogController {
     }
 
     /**
-     * @Description: 根据Id查询数据
-     * @param id 主键
-     * @Reutrn ResponseModel<SysOperateLog>
+     * @Title:  selectById
+     * @Description 根据Id查询数据
+     * @Param id 主键
+     * @Return com.jensen.platform.crm.api.common.bean.ResponseModel<com.jensen.platform.crm.api.entity.sys.SysOperateLog>
+     * @Exception
+     * @Author  Jensen
+     * @Date  2020/10/18 16:39
      */
     @PostMapping("/selectById")
     @ApiOperation("根据主键获取数据")
@@ -91,11 +108,15 @@ public class SysOperateLogController {
     }
 
     /**
-	* @Description: 分页查询
-	* @param page 页码
-	* @param size 每页条数
-	* @Reutrn ResponseModel<PageInfo<SysOperateLog>>
-	*/
+     * @Title:  list
+     * @Description 分页查询
+     * @Param page 页码
+     * @Param size 每页条数
+     * @Return com.jensen.platform.crm.api.common.bean.ResponseModel<com.github.pagehelper.PageInfo<com.jensen.platform.crm.api.entity.sys.SysOperateLog>>
+     * @Exception
+     * @Author  Jensen
+     * @Date  2020/10/18 16:40
+     */
     @PostMapping("/list")
 	@ApiOperation("分页获取数据")
     @AnnotationLog(desc = "分页获取数据", path = "/sysOperateLog/list")

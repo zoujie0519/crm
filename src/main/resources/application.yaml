@@ -10,7 +10,7 @@ spring:
   datasource:
     name: datasource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://www.luquan.vip:3306/crm?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+    url: jdbc:mysql://localhost:3306/yidao?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
     username: root
     password: Aa123456
     # 使用druid连接池

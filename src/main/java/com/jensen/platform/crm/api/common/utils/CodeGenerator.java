@@ -38,7 +38,7 @@ import java.util.*;
 public class CodeGenerator {
 
     // JDBC配置，请修改为你项目的实际配置
-    private static final String JDBC_URL = "jdbc:mysql://www.luquan.vip:3306/crm";
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/yidao?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true";
     private static final String JDBC_USERNAME = "root";
     private static final String JDBC_PASSWORD = "Aa123456";
     private static final String JDBC_DIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver";
@@ -92,7 +92,7 @@ public class CodeGenerator {
      * @Exception
     */
     public static void main(String[] args) {
-        genCode("member", "member_info");
+        genCode("auth", "auth_user");
     }
 
     /**
@@ -109,6 +109,7 @@ public class CodeGenerator {
             SERVICE_IMPL_PACKAGE = SERVICE_PACKAGE + ".impl";
             CONTROLLER_PACKAGE = CONTROLLER_PACKAGE + "." + modelName;
             SQL_MAP_PACKAGE = SQL_MAP_PACKAGE + "." + modelName;
+            VIEW_OBJECT_PACKAGE = VIEW_OBJECT_PACKAGE + "." + modelName;
         }
 
         for (String tableName : tableNames) {
@@ -222,6 +223,7 @@ public class CodeGenerator {
             data.put("basePackageServiceImpl", SERVICE_IMPL_PACKAGE);
             data.put("basePackageModel", MODEL_PACKAGE);
             data.put("basePackageDao", MAPPER_PACKAGE);
+            data.put("basePackagePojoViewObject", VIEW_OBJECT_PACKAGE);
 
             File file = new File(JAVA_PATH + packageConvertPath(SERVICE_PACKAGE) + modelNameUpperCamel + "Service.java");
             if (!file.getParentFile().exists()) {
@@ -290,6 +292,7 @@ public class CodeGenerator {
             data.put("basePackageController", CONTROLLER_PACKAGE);
             data.put("basePackageService", SERVICE_PACKAGE);
             data.put("basePackageModel", MODEL_PACKAGE);
+            data.put("basePackagePojoViewObject", VIEW_OBJECT_PACKAGE);
 
             File file = new File(JAVA_PATH + packageConvertPath(CONTROLLER_PACKAGE) + modelNameUpperCamel + "Controller.java");
             if (!file.getParentFile().exists()) {

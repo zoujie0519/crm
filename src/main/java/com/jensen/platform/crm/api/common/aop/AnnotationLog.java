@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 
 /**
  * @ClassName:  AnnotationLog
- * @Description: TODO(自定义日志注解)
+ * @Description: 自定义日志注解
  * @author: Jensen
  * @date:  2020/9/26 16:43
  */ 

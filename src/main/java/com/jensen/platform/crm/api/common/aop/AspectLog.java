@@ -47,24 +47,23 @@ public class AspectLog {
     /**
      * @Title:  methodCachePointcut
      * @Description 定义切点
-     * @Author  Jensen
-     * @Date  2020/9/26 16:53
-     * @param
-     * @Return
+     * @Return void
      * @Exception
-    */
+     * @Author  Jensen
+     * @Date  2020/10/18 17:22
+     */
     @Pointcut("@annotation(com.jensen.platform.crm.api.common.aop.AnnotationLog)")
     public void methodCachePointcut() {}
 
     /**
      * @Title:  around
      * @Description 环绕切面
+     * @Param proceedingJoinPoint
+     * @Return java.lang.Object
+     * @Exception
      * @Author  Jensen
-     * @Date  2020/9/26 16:52
-     * @param proceedingJoinPoint
-     * @Return {@link java.lang.Object}
-     * @Exception  
-    */
+     * @Date  2020/10/18 17:23
+     */
     @Around("methodCachePointcut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint){
         long begin = System.currentTimeMillis();
@@ -79,7 +78,7 @@ public class AspectLog {
         String desc = annotationLog.desc();
 
         SysOperateLog sysOperateLog = new SysOperateLog();
-        sysOperateLog.builder(getUserId(),"sysadmin");
+        sysOperateLog.builder();
         sysOperateLog.setType(request.getMethod());
         sysOperateLog.setPath(annotationLog.path());
         sysOperateLog.setContent(JSON.toJSONString(proceedingJoinPoint.getArgs()));
