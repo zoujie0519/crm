@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     */
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    ResponseModel handleException(Exception e) {
+    ResponseModel<String> handleException(Exception e) {
         logger.error(e.getMessage(), e);
         return Message.error(HttpStatus.NOT_FOUND);
     }
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
     */
     @ExceptionHandler(BusinessException.class)
     @ResponseBody
-    ResponseModel handleBusinessException(BusinessException e){
+    ResponseModel<String> handleBusinessException(BusinessException e){
         logger.info("业务异常：{}", e.getMessage());
         return Message.error(HttpStatus.NOT_FOUND);
     }
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    ResponseModel handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+    ResponseModel<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
         logger.info("参数错误：{}", e.getMessage());
         // 400901, e.getBindingResult().getAllErrors().get(0).getDefaultMessage()
         return Message.error(HttpStatus.NOT_FOUND);

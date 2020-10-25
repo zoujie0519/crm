@@ -10,17 +10,19 @@
  */
 package com.jensen.platform.crm.api.common.utils;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.UUID;
 
 /**
- * @ClassName:
- * @Description:(描述这个类的作用)
- * @author: jensen
- * @date:
- * @Copyright:
+ * @Description: 项目工具类
+ * @author jensen
+ * @date 2020/10/18 17:16
  */
 public class ApplicationUtils {
+
+    private ApplicationUtils() {}
 
     /**
      * 产生一个36个字符的UUID
@@ -41,44 +43,14 @@ public class ApplicationUtils {
     }
 
     /**
-     * md5加密
-     *
-     * @param value 要加密的值
-     * @return md5加密后的值
-     */
-    /*public static String md5Hex(String value) {
-        return DigestUtils.md5Hex(value);
-    }
-
-    *//**
-     * sha1加密
-     *
-     * @param value 要加密的值
-     * @return sha1加密后的值
-     *//*
-    public static String sha1Hex(String value) {
-        return DigestUtils.sha1Hex(value);
-    }
-
-    *//**
-     * sha256加密
-     *
-     * @param value 要加密的值
-     * @return sha256加密后的值
-     *//*
-    public static String sha256Hex(String value) {
-        return DigestUtils.sha256Hex(value);
-    }*/
-
-    /**
      * 获取多少位随机数
      * @param num
      * @return
      */
-    public static String getNumStringRandom(int num){
+    public static String getNumStringRandom(int num) throws NoSuchAlgorithmException {
         StringBuilder str = new StringBuilder();
-        Random random = new Random();
-        //随机生成数字，并添加到字符串
+        Random random = SecureRandom.getInstanceStrong();
+        // 随机生成数字，并添加到字符串
         for(int i = 0;i<num;i++){
             str.append(random.nextInt(10));
         }
@@ -91,9 +63,8 @@ public class ApplicationUtils {
      * @param max
      * @return
      */
-    public static int getRandomBetween(int min, int max){
-        Random random = new Random();
-        int s = random.nextInt(max)%(max-min+1) + min;
-        return s;
+    public static int getRandomBetween(int min, int max) throws NoSuchAlgorithmException {
+        Random random = SecureRandom.getInstanceStrong();
+        return random.nextInt(max)%(max-min+1) + min;
     }
 }

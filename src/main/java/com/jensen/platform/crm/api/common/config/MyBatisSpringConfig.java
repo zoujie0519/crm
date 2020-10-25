@@ -10,8 +10,8 @@
  */
 package com.jensen.platform.crm.api.common.config;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInterceptor;
+import com.jensen.platform.crm.api.common.exception.BusinessException;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -85,8 +85,7 @@ public class MyBatisSpringConfig implements TransactionManagementConfigurer {
             sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath*:mapper/**/*.xml"));
             return sqlSessionFactoryBean.getObject();
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            throw new BusinessException(9009, "构建SqlSessionFactory时注册xml映射器失败", e);
         }
     }
 

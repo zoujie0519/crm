@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class IpUtils {
 
+    private IpUtils(){}
+
     public static String getIp(HttpServletRequest request) throws Exception {
         if (request == null) {
             throw (new Exception("getIpAddr method HttpServletRequest Object is null"));

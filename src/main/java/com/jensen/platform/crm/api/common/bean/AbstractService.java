@@ -67,7 +67,7 @@ public abstract class AbstractService<T> implements Service<T> {
     }
 
     @Override
-    public T selectBy(String fieldName, Object value) throws TooManyResultsException {
+    public T selectBy(String fieldName, Object value) {
         try {
             T model = modelClass.newInstance();
             Field field = modelClass.getDeclaredField(fieldName);

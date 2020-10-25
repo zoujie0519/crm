@@ -18,6 +18,8 @@ package com.jensen.platform.crm.api.common.constant;
  */
 public class Constant {
 
+    private Constant(){}
+
     /** 系统用户Id */
     public static final String SYSTEM_ADMIN_ID = "24100067-ee04-11e8-850a-00163e03f186";
 

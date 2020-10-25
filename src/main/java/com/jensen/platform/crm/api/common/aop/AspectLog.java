@@ -12,7 +12,6 @@ package com.jensen.platform.crm.api.common.aop;
 
 import com.alibaba.fastjson.JSON;
 import com.jensen.platform.crm.api.common.queue.SystemLogQueue;
-import com.jensen.platform.crm.api.common.utils.ApplicationUtils;
 import com.jensen.platform.crm.api.entity.sys.SysOperateLog;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -67,8 +66,21 @@ public class AspectLog {
     @Around("methodCachePointcut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint){
         long begin = System.currentTimeMillis();
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
+
+        String requestUrl = "";
+        String requestMethod = "";
+        String requestAddr = "";
+        String requestToken = "";
+        try {
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = attributes.getRequest();
+            requestUrl = request.getRequestURL().toString();
+            requestMethod = request.getMethod();
+            requestAddr = request.getRemoteAddr();
+            requestToken = request.getHeader("sso-token");
+        } catch (Exception e) {
+            logger.warn("获取http请求中的属性出错", e);
+        }
 
         Signature signature = proceedingJoinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
@@ -79,20 +91,20 @@ public class AspectLog {
 
         SysOperateLog sysOperateLog = new SysOperateLog();
         sysOperateLog.builder();
-        sysOperateLog.setType(request.getMethod());
+        sysOperateLog.setType(requestMethod);
         sysOperateLog.setPath(annotationLog.path());
         sysOperateLog.setContent(JSON.toJSONString(proceedingJoinPoint.getArgs()));
         sysOperateLog.setDescription(desc);
         sysOperateLog.setStartTime(new Date());
 
         logger.info("请求开始");
-        logger.info("请求连接 {}",request.getRequestURL().toString());
-        logger.info("接口描述 {}",desc);
-        logger.info("请求类型 {}",request.getMethod());
+        logger.info("请求连接 {}", requestUrl);
+        logger.info("接口描述 {}", desc);
+        logger.info("请求类型 {}", requestMethod);
         logger.info("请求方法 {}.{}",signature.getDeclaringTypeName(),signature.getName());
-        logger.info("请求ip {}",request.getRemoteAddr());
+        logger.info("请求ip {}", requestAddr);
         logger.info("请求入参 {}", JSON.toJSONString(proceedingJoinPoint.getArgs()));
-        logger.info("请求token {}",request.getHeader("sso-token"));
+        logger.info("请求token {}", requestToken);
         Object result = null;
         try {
             result = proceedingJoinPoint.proceed();

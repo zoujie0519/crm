@@ -1,9 +1,9 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:  CodeGenerator.java
- * @Package com.jensen.platform.crm.api.common.utils
+ * @title:  CodeGenerator.java
+ * @package com.jensen.platform.crm.api.common.utils
  * @author: Jensen
- * @date:   2020/9/26 16:57
+ * @date:   2020/10/25 10:56
  * @version V1.0
  * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
  * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
@@ -13,11 +13,10 @@ package com.jensen.platform.crm.api.common.utils;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.CaseFormat;
 import freemarker.template.TemplateExceptionHandler;
-import netscape.javascript.JSObject;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.MyBatisGenerator;
-import org.mybatis.generator.api.dom.java.CompilationUnit;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.config.*;
@@ -30,11 +29,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * @ClassName:  CodeGenerator
- * @Description: 代码生成器，根据数据表名称生成对应的Model、Mapper、Service、Controller简化开发。
+ * @className:  CodeGenerator
+ * @description: 代码生成器，根据数据表名称生成对应的Model、Mapper、Service、Controller简化开发。
  * @author: Jensen
- * @date:  2020/9/26 16:58
+ * @date:  2020/10/25 10:56
  */
+@Log4j2
 public class CodeGenerator {
 
     // JDBC配置，请修改为你项目的实际配置
@@ -79,8 +79,11 @@ public class CodeGenerator {
 
     // @author
     private static final String AUTHOR = "jensen";
+
     // @date
     private static final String DATE = new SimpleDateFormat("yyyy/MM/dd HH:mm").format(new Date());
+
+    private static Map<String, Object> templateData = new HashMap<>();
 
     /**
      * @Title:  main
@@ -102,18 +105,8 @@ public class CodeGenerator {
      * @param tableNames 数据表名称...
      */
     public static void genCode(String modelName, String... tableNames) {
-        if(StringUtils.isNotBlank(modelName)) {
-            MODEL_PACKAGE = MODEL_PACKAGE + "." + modelName;
-            MAPPER_PACKAGE = MAPPER_PACKAGE + "." + modelName;
-            SERVICE_PACKAGE = SERVICE_PACKAGE + "." + modelName;
-            SERVICE_IMPL_PACKAGE = SERVICE_PACKAGE + ".impl";
-            CONTROLLER_PACKAGE = CONTROLLER_PACKAGE + "." + modelName;
-            SQL_MAP_PACKAGE = SQL_MAP_PACKAGE + "." + modelName;
-            VIEW_OBJECT_PACKAGE = VIEW_OBJECT_PACKAGE + "." + modelName;
-        }
-
         for (String tableName : tableNames) {
-            genCode(tableName);
+            genCode(modelName, tableName);
         }
     }
 
@@ -123,7 +116,8 @@ public class CodeGenerator {
      *
      * @param tableName 数据表名称
      */
-    public static void genCode(String tableName) {
+    public static void genCode(String modelName, String tableName) {
+        initTemplateData(modelName, tableName);
         genModelAndMapper(tableName);
         genService(tableName);
         genController(tableName);
@@ -172,31 +166,31 @@ public class CodeGenerator {
             warnings = new ArrayList<>();
             generator = new MyBatisGenerator(config, callback, warnings);
             generator.generate(null);
-        } catch (Exception e) {
-            throw new RuntimeException("生成Model和Mapper失败", e);
-        }
 
-        List<GeneratedJavaFile> generatedJavaFiles = generator.getGeneratedJavaFiles();
-        if (generatedJavaFiles.isEmpty() || generator.getGeneratedXmlFiles().isEmpty()) {
-            throw new RuntimeException("生成Model和Mapper失败：" + warnings);
-        }
+            List<GeneratedJavaFile> generatedJavaFiles = generator.getGeneratedJavaFiles();
+            if (generatedJavaFiles.isEmpty() || generator.getGeneratedXmlFiles().isEmpty()) {
+                log.error("生成Model和Mapper失败：", warnings);
+            }
 
-        if(!generatedJavaFiles.isEmpty()) {
-            GeneratedJavaFile generatedJavaFile = generatedJavaFiles.get(0);
-            TopLevelClass topLevelClass = (TopLevelClass)generatedJavaFile.getCompilationUnit();
+            if(!generatedJavaFiles.isEmpty()) {
+                GeneratedJavaFile generatedJavaFile = generatedJavaFiles.get(0);
+                TopLevelClass topLevelClass = (TopLevelClass)generatedJavaFile.getCompilationUnit();
 
-            if(topLevelClass != null) {
-                List<Field> fields = topLevelClass.getFields();
-                if(fields != null && !fields.isEmpty()) {
-                    genViewObject(tableName, fields);
+                if(topLevelClass != null) {
+                    List<Field> fields = topLevelClass.getFields();
+                    if(fields != null && !fields.isEmpty()) {
+                        genViewObject(tableName, fields);
+                    }
                 }
             }
-        }
 
-        String modelName = tableNameConvertUpperCamel(tableName);
-        System.out.println(modelName + ".java 生成成功");
-        System.out.println(modelName + "Mapper.java 生成成功");
-        System.out.println(modelName + "Mapper.xml 生成成功");
+            String modelName = tableNameConvertUpperCamel(tableName);
+            log.info("{}.java 生成成功", modelName);
+            log.info("{}Mapper.java 生成成功", modelName);
+            log.info("{}Mapper.xml 生成成功", modelName);
+        } catch (Exception e) {
+            log.error("生成Model和Mapper失败", e);
+        }
     }
 
     /**
@@ -211,61 +205,42 @@ public class CodeGenerator {
     public static void genService(String tableName) {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
-            //模板所需要的参数
-            Map<String, Object> data = new HashMap<>();
-            data.put("date", DATE);
-            data.put("author", AUTHOR);
             String modelNameUpperCamel = tableNameConvertUpperCamel(tableName);
-            data.put("modelNameUpperCamel", modelNameUpperCamel);
-            data.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
-            data.put("basePackage", BASE_PACKAGE);
-            data.put("basePackageService", SERVICE_PACKAGE);
-            data.put("basePackageServiceImpl", SERVICE_IMPL_PACKAGE);
-            data.put("basePackageModel", MODEL_PACKAGE);
-            data.put("basePackageDao", MAPPER_PACKAGE);
-            data.put("basePackagePojoViewObject", VIEW_OBJECT_PACKAGE);
 
             File file = new File(JAVA_PATH + packageConvertPath(SERVICE_PACKAGE) + modelNameUpperCamel + "Service.java");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            cfg.getTemplate("service.ftl").process(data, new FileWriter(file));
-            System.out.println(modelNameUpperCamel + "Service.java 生成成功");
+            cfg.getTemplate("service.ftl").process(templateData, new FileWriter(file));
+            log.info("{}Service.java 生成成功", modelNameUpperCamel);
 
             File file1 = new File(JAVA_PATH + packageConvertPath(SERVICE_IMPL_PACKAGE) + modelNameUpperCamel + "ServiceImpl.java");
             if (!file1.getParentFile().exists()) {
                 file1.getParentFile().mkdirs();
             }
-            cfg.getTemplate("service-impl.ftl").process(data, new FileWriter(file1));
-            System.out.println(modelNameUpperCamel + "ServiceImpl.java 生成成功");
+            cfg.getTemplate("service-impl.ftl").process(templateData, new FileWriter(file1));
+            log.info("{}ServiceImpl.java 生成成功", modelNameUpperCamel);
         } catch (Exception e) {
-            throw new RuntimeException("生成Service失败", e);
+            log.error("生成Service失败", e);
         }
     }
 
     private static void genViewObject(String tableName, List<Field> fields) {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
-            Map<String, Object> data = new HashMap<>();
-            data.put("date", DATE);
-            data.put("author", AUTHOR);
             String modelNameUpperCamel = tableNameConvertUpperCamel(tableName);
-            data.put("modelNameUpperCamel", modelNameUpperCamel);
-            data.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
-            data.put("basePackage", BASE_PACKAGE);
-            data.put("basePackagePojoViewObject", VIEW_OBJECT_PACKAGE);
-            data.put("fields", fields);
-            System.out.println("fields: " + JSONObject.toJSONString(fields));
+            log.info("fields: {}" , JSONObject.toJSONString(fields));
+            templateData.put("fields", fields);
 
             File file = new File(JAVA_PATH + packageConvertPath(VIEW_OBJECT_PACKAGE) + modelNameUpperCamel + "VO.java");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            cfg.getTemplate("pojo-vo.ftl").process(data, new FileWriter(file));
+            cfg.getTemplate("pojo-vo.ftl").process(templateData, new FileWriter(file));
 
-            System.out.println(modelNameUpperCamel + "VO.java 生成成功");
+            log.info("{}VO.java 生成成功", modelNameUpperCamel);
         } catch (Exception e) {
-            throw new RuntimeException("生成ViewObject失败", e);
+            log.error("生成ViewObject失败", e);
         }
     }
 
@@ -281,28 +256,16 @@ public class CodeGenerator {
     public static void genController(String tableName) {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
-            Map<String, Object> data = new HashMap<>();
-            data.put("date", DATE);
-            data.put("author", AUTHOR);
             String modelNameUpperCamel = tableNameConvertUpperCamel(tableName);
-            data.put("baseRequestMapping", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
-            data.put("modelNameUpperCamel", modelNameUpperCamel);
-            data.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
-            data.put("basePackage", BASE_PACKAGE);
-            data.put("basePackageController", CONTROLLER_PACKAGE);
-            data.put("basePackageService", SERVICE_PACKAGE);
-            data.put("basePackageModel", MODEL_PACKAGE);
-            data.put("basePackagePojoViewObject", VIEW_OBJECT_PACKAGE);
-
             File file = new File(JAVA_PATH + packageConvertPath(CONTROLLER_PACKAGE) + modelNameUpperCamel + "Controller.java");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            cfg.getTemplate("controller.ftl").process(data, new FileWriter(file));
+            cfg.getTemplate("controller.ftl").process(templateData, new FileWriter(file));
 
-            System.out.println(modelNameUpperCamel + "Controller.java 生成成功");
+            log.info("{}Controller.java 生成成功", modelNameUpperCamel);
         } catch (Exception e) {
-            throw new RuntimeException("生成Controller失败", e);
+            log.error("生成Controller失败", e);
         }
     }
 
@@ -425,6 +388,42 @@ public class CodeGenerator {
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
         return cfg;
+    }
+
+    /**
+     * @title:  initTemplateData
+     * @description 模板所需要的参数
+     * @param modelName: 模块名称
+     * @param tableName: 表名称
+     * @return void
+     * @author  Jensen
+     * @date  2020/10/25 10:49
+     */
+    private static void initTemplateData(String modelName, String tableName) {
+        if(StringUtils.isNotBlank(modelName)) {
+            MODEL_PACKAGE = MODEL_PACKAGE + "." + modelName;
+            MAPPER_PACKAGE = MAPPER_PACKAGE + "." + modelName;
+            SERVICE_PACKAGE = SERVICE_PACKAGE + "." + modelName;
+            SERVICE_IMPL_PACKAGE = SERVICE_PACKAGE + ".impl";
+            CONTROLLER_PACKAGE = CONTROLLER_PACKAGE + "." + modelName;
+            SQL_MAP_PACKAGE = SQL_MAP_PACKAGE + "." + modelName;
+            VIEW_OBJECT_PACKAGE = VIEW_OBJECT_PACKAGE + "." + modelName;
+        }
+
+        String modelNameUpperCamel = tableNameConvertUpperCamel(tableName);
+        templateData.clear();
+        templateData.put("date", DATE);
+        templateData.put("author", AUTHOR);
+        templateData.put("basePackage", BASE_PACKAGE);
+        templateData.put("modelNameUpperCamel", modelNameUpperCamel);
+        templateData.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
+        templateData.put("basePackageModel", MODEL_PACKAGE);
+        templateData.put("basePackagePojoViewObject", VIEW_OBJECT_PACKAGE);
+        templateData.put("basePackageController", CONTROLLER_PACKAGE);
+        templateData.put("basePackageService", SERVICE_PACKAGE);
+        templateData.put("basePackageServiceImpl", SERVICE_IMPL_PACKAGE);
+        templateData.put("basePackageDao", MAPPER_PACKAGE);
+        templateData.put("baseRequestMapping", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
     }
 
     /**
