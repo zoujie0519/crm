@@ -58,7 +58,7 @@ public class SwaggerConfig {
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .enable(enable)
-                .groupName("test-data")
+                .groupName("所有接口")
                 .apiInfo(apiInfo())
                 .globalOperationParameters(Collections.singletonList(parameter))
                 .select()

@@ -30,18 +30,17 @@ import java.io.IOException;
  * @date:  2020/9/28 10:44
  */ 
 @Component
-public class UnAuthorizedEntryPoint implements AuthenticationEntryPoint {
+public class JWTAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private static final Logger logger = LoggerFactory.getLogger(UnAuthorizedEntryPoint.class);
+    private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationEntryPoint.class);
 
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException)
-            throws IOException, ServletException {
+            throws IOException {
 
         logger.info("JwtAuthenticationEntryPoint: {}", authException.getMessage());
-        ///response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"没有凭证");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
         Message.error(HttpStatus.UNAUTHORIZED, response);

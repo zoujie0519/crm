@@ -10,6 +10,7 @@
  */
 package com.jensen.platform.crm.api.common.config;
 
+import com.jensen.platform.crm.api.common.security.JWTAuthenticationEntryPoint;
 import com.jensen.platform.crm.api.common.security.JWTAuthenticationFilter;
 import com.jensen.platform.crm.api.common.security.JWTAuthorizationFilter;
 import com.jensen.platform.crm.api.common.security.JWTUserDetailsService;
@@ -105,7 +106,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()))
                 // 不需要session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                // 统一结果处理
+                .exceptionHandling().authenticationEntryPoint(new JWTAuthenticationEntryPoint());
     }
 
     @Bean
