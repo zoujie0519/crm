@@ -1,6 +1,6 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:  JwtAuthorizationTokenFilter.java
+ * @Title:  JWTAuthorizationFilter.java
  * @Package com.jensen.platform.crm.api.common.security
  * @author: Jensen
  * @date:   2020/9/28 10:44
@@ -36,11 +36,11 @@ import java.util.List;
  * @date:  2020/10/17 18:07
  */
 @Component
-public class JwtAuthorizationTokenFilter extends BasicAuthenticationFilter {
+public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtAuthorizationTokenFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
 
-    public JwtAuthorizationTokenFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
     }
 
@@ -59,10 +59,9 @@ public class JwtAuthorizationTokenFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
-        String tokenHeader = request.getHeader(JwtTokenUtils.TOKEN_HEADER);
-        logger.info("tokenHeader: {}", tokenHeader);
+        String tokenHeader = request.getHeader(JWTTokenUtils.TOKEN_HEADER);
         // 如果请求头中没有Authorization信息则直接放行了
-        if (tokenHeader == null || !tokenHeader.startsWith(JwtTokenUtils.TOKEN_PREFIX)) {
+        if (tokenHeader == null || !tokenHeader.startsWith(JWTTokenUtils.TOKEN_PREFIX)) {
             chain.doFilter(request, response);
             return;
         }
@@ -82,9 +81,9 @@ public class JwtAuthorizationTokenFilter extends BasicAuthenticationFilter {
      */
     private UsernamePasswordAuthenticationToken getAuthentication(String tokenHeader) {
         //解析Token时将“Bearer ”前缀去掉
-        String token = tokenHeader.replace(JwtTokenUtils.TOKEN_PREFIX, "");
-        String username = JwtTokenUtils.getUsername(token);
-        List<String> roles = JwtTokenUtils.getUserRole(token);
+        String token = tokenHeader.replace(JWTTokenUtils.TOKEN_PREFIX, "");
+        String username = JWTTokenUtils.getUsername(token);
+        List<String> roles = JWTTokenUtils.getUserRole(token);
         Collection<GrantedAuthority> authorities = new HashSet<>();
         if (roles!=null) {
             for (String role : roles) {

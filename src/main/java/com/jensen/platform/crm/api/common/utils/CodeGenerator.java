@@ -415,6 +415,7 @@ public class CodeGenerator {
         templateData.put("date", DATE);
         templateData.put("author", AUTHOR);
         templateData.put("basePackage", BASE_PACKAGE);
+        templateData.put("modelName", modelName);
         templateData.put("modelNameUpperCamel", modelNameUpperCamel);
         templateData.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
         templateData.put("basePackageModel", MODEL_PACKAGE);

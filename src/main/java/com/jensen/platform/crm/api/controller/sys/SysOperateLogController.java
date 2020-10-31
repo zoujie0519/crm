@@ -32,7 +32,7 @@ import java.util.List;
  */
 @RestController
 @Api(tags = "SysOperateLog控制器")
-@RequestMapping("/sysOperateLog")
+@RequestMapping("/sys/sysOperateLog")
 public class SysOperateLogController {
 
     @Resource

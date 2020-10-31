@@ -10,6 +10,8 @@
  */
 package com.jensen.platform.crm.api.common.security;
 
+import com.jensen.platform.crm.api.entity.auth.AuthUser;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,15 +28,17 @@ import java.util.List;
  * @author: Jensen
  * @date:  2020/10/17 18:15
  */
+@Log4j2
 @Service
-public class JwtUserDetailsService implements UserDetailsService {
+public class JWTUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String user) throws UsernameNotFoundException {
-        System.out.println("JwtUserDetailsService:" + user);
-        List<GrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority("ROLE_USER"));
-        return new SecurityUserDetails(user,authorityList);
+        log.info("JwtUserDetailsService：{}", user);
+        AuthUser authUser = new AuthUser();
+        authUser.setLoginName(user);
+        authUser.setPassword("$2a$10$7ha46kngKqaHSKBGQixid.c/rZ.McPyYjnPN/mDJ./TftQ6WPXbty");
+        return new JWTUser(authUser);
     }
 
 }

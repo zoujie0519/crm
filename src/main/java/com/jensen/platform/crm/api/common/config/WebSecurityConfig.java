@@ -10,26 +10,22 @@
  */
 package com.jensen.platform.crm.api.common.config;
 
-import com.jensen.platform.crm.api.common.security.JwtLoginAuthFilter;
-import com.jensen.platform.crm.api.common.security.UnAuthorizedEntryPoint;
-import com.jensen.platform.crm.api.common.security.JwtAuthorizationTokenFilter;
-import com.jensen.platform.crm.api.common.security.JwtUserDetailsService;
+import com.jensen.platform.crm.api.common.security.JWTAuthenticationFilter;
+import com.jensen.platform.crm.api.common.security.JWTAuthorizationFilter;
+import com.jensen.platform.crm.api.common.security.JWTUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * @ClassName:  WebSecurityConfig
@@ -43,20 +39,49 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    JwtUserDetailsService jwtUserDetailsService;
+    JWTUserDetailsService jwtUserDetailsService;
+    
+    /**
+     * @title:  passwordEncoderBean
+     * @description 加密算法生成bean
+     * @return org.springframework.security.crypto.password.PasswordEncoder
+     * @author  Jensen
+     * @date  2020/10/31 15:45
+     */
+    @Bean
+    public PasswordEncoder passwordEncoderBean() {
+        return new BCryptPasswordEncoder();
+    }
 
     /**
-     * @Title:  configureGlobal
-     * @Description  加载userDetailsService，用于从数据库中取用户信息
-     * @Author  Jensen
-     * @Date  2020/9/28 10:31
-     * @param auth
-     * @Return
-     * @Exception
-    */
+     * @title:  configureGlobal
+     * @description 使用自定义登录身份认证组件
+     * @param auth: 
+     * @return void
+     * @exception
+     * @author  Jensen
+     * @date  2020/10/31 15:46
+     */
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        //JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(userDetailsService());
+        //jwtAuthenticationProvider.setPasswordEncoder(new MyPasswordEncoder());
+        //auth.authenticationProvider(jwtAuthenticationProvider);
         auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoderBean());
+    }
+
+    /**
+     * @title:  configure
+     * @description 解决静态资源被拦截的问题
+     * @param web:
+     * @return void
+     * @exception
+     * @author  Jensen
+     * @date  2020/10/31 15:49
+     */
+    public void configure(WebSecurity web) {
+        //解决静态资源被拦截的问题
+        web.ignoring().antMatchers("/favicon.ico","/error","/doc.html","/webjars/**","/swagger**/**","/v2/**");
     }
 
     /***
@@ -70,58 +95,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors()
-                .and()
-                // 关闭csrf
-                .csrf().disable()
-                // 关闭session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .httpBasic().authenticationEntryPoint(new UnAuthorizedEntryPoint())
-                .and()
+        http.cors().and().csrf().disable()
                 .authorizeRequests()
-                // 需要角色为ADMIN才能删除该资源
-                //.antMatchers(HttpMethod.DELETE,"/tasks/**").hasAnyRole("ADMIN")
                 // 测试用资源，需要验证了的用户才能访问
-                //.antMatchers("/tasks/**").authenticated()
+                .antMatchers("/sys/**").authenticated()
                 // 其他都放行了
                 .anyRequest().permitAll()
                 .and()
-                .formLogin()
-                //.loginPage("/login")
-                .defaultSuccessUrl("/doc.html").permitAll()
-                .permitAll()
-                //.successHandler(new Fx)
-                .and()
-                .logout()//默认注销行为为logout
-                //.logoutSuccessHandler(new FxLogoutSuccessHandler())
-                .and()
-                // 添加到过滤链中
-                // 先是UsernamePasswordAuthenticationFilter用于login校验
-                .addFilter(new JwtLoginAuthFilter(authenticationManager()))
-                // 再通过OncePerRequestFilter，对其他请求过滤
-                .addFilter(new JwtAuthorizationTokenFilter(authenticationManager()));
-    }
-
-    /***
-     * @Title:  passwordEncoderBean
-     * @Description 加密器
-     * @Author  Jensen
-     * @Date  2020/9/29 9:29
-     * @param
-     * @Return {@link org.springframework.security.crypto.password.PasswordEncoder}
-     * @Exception
-    */
-    @Bean
-    public PasswordEncoder passwordEncoderBean() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-        return source;
+                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                // 不需要session
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Bean
@@ -129,4 +113,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
 }

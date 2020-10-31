@@ -10,7 +10,7 @@
  */
 package com.jensen.platform.crm.api.common.security;
 
-import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jensen.platform.crm.api.common.bean.Message;
 import com.jensen.platform.crm.api.common.enums.HttpStatus;
 import com.jensen.platform.crm.api.entity.auth.AuthUser;
@@ -42,57 +42,58 @@ import java.util.List;
  * @Date: 2020/9/29 9:33
  * @Version: V1.0
  **/
-public class JwtLoginAuthFilter extends UsernamePasswordAuthenticationFilter {
+public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtLoginAuthFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
 
     /** AuthenticationManager： 用户认证的管理类，所有的认证请求（比如login）都会通过提交一个token给AuthenticationManager的authenticate()方法来实现。
         当然事情肯定不是它来做，具体校验动作会由AuthenticationManager将请求转发给具体的实现类来做。根据实现反馈的结果再调用具体的Handler来给用户以反馈。*/
     private AuthenticationManager authenticationManager;
 
-    /***
-     * @Title:  JwtLoginAuthFilter
-     * @Description 设置过滤地址
-     * @Author  Jensen
-     * @Date  2020/9/29 9:38
-     * @param authenticationManager
-     * @Return {@link null}
-     * @Exception
-    */
-    public JwtLoginAuthFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
-        // 设置该过滤器地址
-        super.setFilterProcessesUrl("/login");
-
     }
 
     /**
-     * @Title:  attemptAuthentication
-     * @Description 登录验证
-     * @Author  Jensen
-     * @Date  2020/9/29 9:35
-     * @param request
-     * @param response
-     * @Return {@link org.springframework.security.core.Authentication}
-     * @Exception
-    */
+     * @title:  attemptAuthentication
+     * @description 从输入流中获取到登录的信息，尝试身份验证
+     * @param request:
+     * @param response:
+     * @return org.springframework.security.core.Authentication
+     * @exception
+     * @author  Jensen
+     * @date  2020/10/31 16:20
+     */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
-        AuthUser authUser = new AuthUser();
-        authUser.setLoginName(request.getParameter("username"));
-        authUser.setPassword(request.getParameter("password"));
-        //authUser.setRememberMe(Boolean.parseBoolean(request.getParameter("rememberMe")));
-        logger.info("登陆用户: {}", authUser);
-        return authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authUser.getLoginName(), authUser.getPassword(), new ArrayList<>())
-        );
+        JWTUser loginUser = null;
+        try {
+            loginUser = new ObjectMapper().readValue(request.getInputStream(), JWTUser.class);
+        } catch (IOException e) {
+            logger.info("从输入流中获取到登录的信息失败1：", e);
+        }
 
+        try {
+            if(loginUser == null) {
+                AuthUser authUser = new AuthUser();
+                authUser.setLoginName(request.getParameter("account"));
+                authUser.setPassword(request.getParameter("password"));
+                loginUser = new JWTUser(authUser);
+            }
+        } catch (Exception e) {
+            logger.info("从输入流中获取到登录的信息失败2：", e);
+            return null;
+        }
+
+        return authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword(), new ArrayList<>())
+        );
     }
 
     /**
      * @Title:  successfulAuthentication
-     * @Description 登录验证成功后调用，验证成功后将生成Token，并重定向到用户主页home
+     * @Description 登录验证成功后调用，验证成功后将生成Token
      * 与AuthenticationSuccessHandler作用相同
      * @Author  Jensen
      * @Date  2020/9/29 9:50
@@ -109,7 +110,7 @@ public class JwtLoginAuthFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
         // 查看源代码会发现调用getPrincipal()方法会返回一个实现了`UserDetails`接口的对象，这里是JwtAuthUser
-        JwtAuthUser jwtAuthUser = (JwtAuthUser) authResult.getPrincipal();
+        JWTUser jwtAuthUser = (JWTUser) authResult.getPrincipal();
         logger.info("JwtAuthUser: {}", jwtAuthUser);
 
         List<String> roles = new ArrayList<>();
@@ -118,14 +119,11 @@ public class JwtLoginAuthFilter extends UsernamePasswordAuthenticationFilter {
             roles.add(authority.getAuthority());
         }
         logger.info("roles: {}", roles);
-        String token = JwtTokenUtils.createToken(jwtAuthUser.getUsername(), roles, true);
+        // 返回创建成功的token，这里创建的token只是单纯的token
+        String token = JWTTokenUtils.createToken(jwtAuthUser.getUsername(), roles, true);
         logger.info("token: {}", token);
-        // 重定向无法设置header,这里设置header只能设置到/auth/login界面的header
-        //response.setHeader("token", JwtTokenUtils.TOKEN_PREFIX + token);
-
-        // 登录成功重定向到home界面
-        // 这里先采用参数传递
-        response.sendRedirect("/doc.html?token="+token);
+        // 按照jwt的规定，最后请求的格式应该是 `Bearer token`
+        response.setHeader(JWTTokenUtils.TOKEN_HEADER, JWTTokenUtils.TOKEN_PREFIX + token);
     }
 
     /**

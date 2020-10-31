@@ -1,9 +1,9 @@
 /*
  * All rights Reserved, Designed By www.jensen.com
- * @Title:  api
- * @Package com.jensen.platform.crm.api.common.security
+ * @title:  JWTUser.java
+ * @package com.jensen.platform.crm.api.common.security
  * @author: Jensen
- * @date:   2020/9/29 9:41
+ * @date:   2020/10/31 19:04
  * @version V1.0
  * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
  * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
@@ -23,13 +23,13 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * @ClassName: JwtAuthUser
+ * @ClassName: JWTUser
  * @Description: 实现UserDetails，封装用户信息，用于验证身份
  * @Author: Jensen
  * @Date: 2020/9/29 9:41
  * @Version: V1.0
  **/
-public class JwtAuthUser implements UserDetails {
+public class JWTUser implements UserDetails {
 
     private String id;
     private String userName;
@@ -46,9 +46,9 @@ public class JwtAuthUser implements UserDetails {
      * @Return {@link null}
      * @Exception
     */
-    public JwtAuthUser(AuthUser authUser){
+    public JWTUser(AuthUser authUser){
         this.id = authUser.getId();
-        this.userName = authUser.getUserName();
+        this.userName = authUser.getLoginName();
         this.password = authUser.getPassword();
         this.roles = new ArrayList<>();
         this.roles.add("ADMIN");

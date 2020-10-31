@@ -36,7 +36,7 @@ import java.util.List;
 */
 @Api(tags = "${modelNameUpperCamel}控制器")
 @RestController
-@RequestMapping("/${baseRequestMapping}")
+@RequestMapping("/${modelName}/${baseRequestMapping}")
 public class ${modelNameUpperCamel}Controller {
 
     @Resource

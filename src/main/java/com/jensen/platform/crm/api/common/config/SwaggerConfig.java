@@ -11,6 +11,7 @@
 package com.jensen.platform.crm.api.common.config;
 
 import com.github.xiaoymin.swaggerbootstrapui.model.OrderExtensions;
+import com.jensen.platform.crm.api.common.security.JWTTokenUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,11 +48,12 @@ public class SwaggerConfig {
 
         // 在请求头中添加一个为 Authorization 的属性 Security拦截器JWT认证的时需要
         Parameter parameter = new ParameterBuilder()
-                .name("Authorization")
+                .name(JWTTokenUtils.TOKEN_HEADER)
                 .description("token令牌")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")
                 .required(true)
+                .defaultValue(JWTTokenUtils.TOKEN_PREFIX)
                 .build();
 
         return new Docket(DocumentationType.SWAGGER_2)
