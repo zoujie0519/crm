@@ -18,7 +18,7 @@ import com.jensen.platform.crm.api.common.security.JWTTokenUtils;
 import com.jensen.platform.crm.api.common.security.JWTUser;
 import com.jensen.platform.crm.api.entity.auth.AuthUser;
 import com.jensen.platform.crm.api.service.auth.AuthUserService;
-import com.jensen.platform.crm.api.pojo.vo.auth.AuthUserVO;
+import com.jensen.platform.crm.api.pojo.dto.auth.AuthUserDTO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -134,7 +134,7 @@ public class AuthUserController {
     @PostMapping("/insert")
 	@ApiOperation("添加的数据")
     @AnnotationLog(desc = "添加的数据", path = "/authUser/insert")
-    public ResponseModel<Integer> insert(AuthUserVO model) {
+    public ResponseModel<Integer> insert(AuthUserDTO model) {
         AuthUser authUser = new AuthUser();
         BeanUtils.copyProperties(model, authUser);
         authUser.setPassword(bCryptPasswordEncoder.encode(authUser.getPassword()));

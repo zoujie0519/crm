@@ -8,7 +8,9 @@
  * @Copyright: 2020 www.jensen.com Inc. All rights reserved.
  * 注意：本内容仅限于深圳杰森科技有限公司内部传阅，禁止外泄以及用于其他的商业目
  */
-package com.jensen.platform.crm.api.pojo.vo.auth;
+package com.jensen.platform.crm.api.pojo.dto.auth;
+
+import com.jensen.platform.crm.api.common.bean.RequestDTO;
 
 import java.util.Date;
 import java.io.Serializable;
@@ -18,7 +20,7 @@ import java.io.Serializable;
 * @author jensen
 * @date 2020/10/18 17:16
 */
-public class AuthUserVO implements Serializable {
+public class AuthUserDTO extends RequestDTO implements Serializable {
 
     /** 属性corpId */
     private String corpId;
