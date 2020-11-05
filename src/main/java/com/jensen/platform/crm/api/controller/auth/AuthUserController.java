@@ -154,6 +154,7 @@ public class AuthUserController {
     @PostMapping("/deleteById")
 	@ApiOperation("根据Id删除数据")
     @AnnotationLog(desc = "根据Id删除数据", path = "/authUser/deleteById")
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "query")})
     public ResponseModel<Integer> deleteById(@RequestParam String id) {
         Integer state = authUserService.deleteById(id);
         return Message.success(state);
@@ -186,6 +187,7 @@ public class AuthUserController {
     @PostMapping("/selectById")
 	@ApiOperation("根据主键获取数据")
     @AnnotationLog(desc = "根据主键获取数据", path = "/authUser/selectById")
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "query")})
     public ResponseModel<AuthUser> selectById(@RequestParam String id) {
         AuthUser authUser = authUserService.selectById(id);
         return Message.success(authUser);
@@ -203,6 +205,10 @@ public class AuthUserController {
     @PostMapping("/list")
 	@ApiOperation("分页获取数据")
     @AnnotationLog(desc = "分页获取数据", path = "/authUser/list")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页条数", paramType = "query")
+    })
     public ResponseModel<PageInfo<AuthUser>> list(@RequestParam(defaultValue = "0") Integer page,
 					@RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);

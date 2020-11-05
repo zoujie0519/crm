@@ -66,7 +66,7 @@ public class CodeGenerator {
     public static String CONTROLLER_PACKAGE = BASE_PACKAGE + ".controller";
 
     // viewObject所在包
-    public static String VIEW_OBJECT_PACKAGE = BASE_PACKAGE + ".pojo.vo";
+    public static String VIEW_OBJECT_PACKAGE = BASE_PACKAGE + ".pojo.dto";
 
     // Mapper xml所在包
     public static String SQL_MAP_PACKAGE = "mapper";
@@ -232,13 +232,13 @@ public class CodeGenerator {
             log.info("fields: {}" , JSONObject.toJSONString(fields));
             templateData.put("fields", fields);
 
-            File file = new File(JAVA_PATH + packageConvertPath(VIEW_OBJECT_PACKAGE) + modelNameUpperCamel + "VO.java");
+            File file = new File(JAVA_PATH + packageConvertPath(VIEW_OBJECT_PACKAGE) + modelNameUpperCamel + "DTO.java");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            cfg.getTemplate("pojo-vo.ftl").process(templateData, new FileWriter(file));
+            cfg.getTemplate("pojo-dto.ftl").process(templateData, new FileWriter(file));
 
-            log.info("{}VO.java 生成成功", modelNameUpperCamel);
+            log.info("{}DTO.java 生成成功", modelNameUpperCamel);
         } catch (Exception e) {
             log.error("生成ViewObject失败", e);
         }

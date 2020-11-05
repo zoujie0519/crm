@@ -15,7 +15,7 @@ import ${basePackage}.common.bean.Message;
 import ${basePackage}.common.bean.ResponseModel;
 import ${basePackageModel}.${modelNameUpperCamel};
 import ${basePackageService}.${modelNameUpperCamel}Service;
-import ${basePackagePojoViewObject}.${modelNameUpperCamel}VO;
+import ${basePackagePojoViewObject}.${modelNameUpperCamel}DTO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -53,7 +53,7 @@ public class ${modelNameUpperCamel}Controller {
     @PostMapping("/insert")
 	@ApiOperation("添加的数据")
     @AnnotationLog(desc = "添加的数据", path = "/${baseRequestMapping}/insert")
-    public ResponseModel<Integer> insert(${modelNameUpperCamel}VO model) {
+    public ResponseModel<Integer> insert(${modelNameUpperCamel}DTO model) {
         ${modelNameUpperCamel} ${modelNameLowerCamel} = new ${modelNameUpperCamel}();
         BeanUtils.copyProperties(model, ${modelNameLowerCamel});
         ${modelNameLowerCamel}.builder();
@@ -71,7 +71,8 @@ public class ${modelNameUpperCamel}Controller {
     */
     @PostMapping("/deleteById")
 	@ApiOperation("根据Id删除数据")
-    @AnnotationLog(desc = "根据Id删除数据", path = "/${baseRequestMapping}/deleteById")
+    @AnnotationLog(desc = "根据Id删除数据", path = "/${baseRequestMapping}/deleteById") 
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "query")})
     public ResponseModel<Integer> deleteById(@RequestParam String id) {
         Integer state = ${modelNameLowerCamel}Service.deleteById(id);
         return Message.success(state);
@@ -103,6 +104,7 @@ public class ${modelNameUpperCamel}Controller {
     */
     @PostMapping("/selectById")
 	@ApiOperation("根据主键获取数据")
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "主键", required = true, paramType = "query")})
     @AnnotationLog(desc = "根据主键获取数据", path = "/${baseRequestMapping}/selectById")
     public ResponseModel<${modelNameUpperCamel}> selectById(@RequestParam String id) {
         ${modelNameUpperCamel} ${modelNameLowerCamel} = ${modelNameLowerCamel}Service.selectById(id);
@@ -121,6 +123,10 @@ public class ${modelNameUpperCamel}Controller {
     @PostMapping("/list")
 	@ApiOperation("分页获取数据")
     @AnnotationLog(desc = "分页获取数据", path = "/${baseRequestMapping}/list")
+            @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页条数", paramType = "query")
+    })
     public ResponseModel<PageInfo<${modelNameUpperCamel}>> list(@RequestParam(defaultValue = "0") Integer page,
 					@RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
