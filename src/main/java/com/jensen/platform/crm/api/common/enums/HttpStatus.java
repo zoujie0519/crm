@@ -50,7 +50,9 @@ public enum HttpStatus {
 
     SERVICE_ERROR(6000, "Service return error"),
 
-    PRODUCT_TAG_FOUND(7001, "Product Not Found");
+    PRODUCT_TAG_FOUND(7001, "Product Not Found"),
+
+    REPEAT_SUBMIT_OPERATION_EXCEPTION(8001, "Repeat Submit Operation");
 
     public int code;
 
